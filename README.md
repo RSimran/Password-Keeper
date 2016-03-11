@@ -1,6 +1,6 @@
 # Password-Keeper
 
-Saves encrypted password using AES 256 bit aglorithm.
+Saves encrypted password using AES 256 bit aglorithm to a local file.
 
 usage: pass.py [-h] [-l LIST] [-d DELACC] [account] [keypass] [password]
 

@@ -8,11 +8,7 @@ from Crypto.Cipher import AES
 from Crypto import Random
 import pickle
 
-
-
 PATH = 'passdb'
-
-
 
 # Pad the raw input so it is divide by 16 in order to use AES 256 encryption
 BLOCK_SIZE = 32
@@ -67,8 +63,3 @@ elif args.account not in PASSWORD:
 			print("The password has been added to the database.")
 		except:
 			print("The password as not saved.")
-
-
-
-
-

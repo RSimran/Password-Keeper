@@ -1,5 +1,7 @@
 # Password-Keeper
 
+Saves password encrypted using AES 256 bit aglorithm.
+
 usage: pass.py [-h] [-l LIST] [-d DELACC] [account] [keypass] [password]
 
 positional arguments:

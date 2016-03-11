@@ -1,7 +1,5 @@
 #! python3
-# pass.py - An insurance password locker program
-
-
+# pass.py - A password locker program
 
 import sys, json, os, pyperclip, argparse, base64, hashlib
 from Crypto.Cipher import AES
@@ -31,15 +29,23 @@ class AESCipher:
 		return unpad(cipher.decrypt(enc[16:]))
 
 parser = argparse.ArgumentParser()
-parser.add_argument('account', help='website for the password that you want')
-parser.add_argument('keypass', help='keypass for the passwords')
+parser.add_argument('-l', '--list', help='lists the accounts stored in database')
+parser.add_argument('-d', '--delacc', help='deletes account from database')
+parser.add_argument('account',nargs='?', help='website for the password that you want')
+parser.add_argument('keypass',nargs='?', help='keypass for the passwords')
 parser.add_argument('password', nargs='?', help='password for the website you would like to add')
+
 args = parser.parse_args()
 
+# Used pickle module for serialization in order to save byte data
 if os.path.exists(PATH):
 	PASSWORD = pickle.load(open('passdb','rb'))
 else:
 	PASSWORD = {}
+if args.list:
+	print("These are the saved accounts in this database: ")
+	for v in PASSWORD.keys():
+		print(v)
 
 
 if (args.account in PASSWORD) and args.keypass:
@@ -48,14 +54,15 @@ if (args.account in PASSWORD) and args.keypass:
 	if not passwords.decode('utf-8'):
 		print('The passkey is incorrect. ')
 	else:
-		pyperclip.copy(passwords.decode("utf-8"))
+		pyperclip.copy(passwords.decode("utf-8")) # decode so that string is copied to clipboard instead of bytes
 		print('Passsword for ' + args.account + ' copied to clipboard.')
-elif args.account not in PASSWORD:
+elif args.account not in PASSWORD and not args.list:
 	addtodb = input("This account is not in the database. Would you like to add it? ")
 	if addtodb.lower() ==  'y':
 		account_name = input("Account name: ")
 		account_pass = input("Password: ")
-		temp_pass = AESCipher(account_pass)
+		temp_key = input("Please enter passkey: ")
+		temp_pass = AESCipher(temp_key)
 		passw = temp_pass.encrypt(account_pass)
 		PASSWORD[account_name] = passw
 		try:
@@ -63,3 +70,7 @@ elif args.account not in PASSWORD:
 			print("The password has been added to the database.")
 		except:
 			print("The password as not saved.")
+
+if args.delacc:
+	PASSWORD.pop(args.account, None)
+	pickle.dump(PASSWORD, open('passdb','wb'))
